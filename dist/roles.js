@@ -1,0 +1,6 @@
+export function destination(context){return context?.admin?'#admin':context?.events?.length?'#staff':'#live-mine'}
+export function links(context){
+ const items=[['#home','หน้าแรก'],['#live-events','กิจกรรมทั้งหมด'],['#live-mine','กิจกรรมของฉัน']];
+ if(context?.admin)return [...items,['#admin','จัดการระบบ'],['#staff','งานเจ้าหน้าที่']];
+ return context?.events?.length?[...items,['#staff','งานที่ได้รับมอบหมาย']]:items;
+}

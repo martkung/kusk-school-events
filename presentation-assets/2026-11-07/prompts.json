@@ -1,0 +1,65 @@
+{
+  "generator": "built-in image_gen",
+  "assets": [
+    {
+      "id": "poster-ai",
+      "prompt": "Portrait 3:4 premium Thai school workshop poster, cinematic polished 3D illustration of friendly small robot with holographic creative tools and notebook, midnight navy and electric cyan with warm yellow accents. Bold elegant editorial typography. Exact text: 'KUSK EVENTS', 'AI CREATIVE LAB', 'เรียนรู้ AI สร้างสรรค์', 'กิจกรรมจำลอง • สำหรับสาธิต'. Large readable headline, spacious hierarchy, no QR codes no invented logos, no dates or prices. Beautiful professional print poster, not a mockup.",
+      "original": "originals/poster-ai.png",
+      "web": "web/poster-ai.jpg"
+    },
+    {
+      "id": "poster-green",
+      "prompt": "Portrait 3:4 premium Thai school activity poster, sophisticated paper-cut botanical illustration of a miniature green school garden, seedlings, leaves and hands planting, emerald sage cream palette with sunlight and tactile depth. Exact text: 'KUSK EVENTS', 'GREEN SCHOOL', 'ห้องเรียนสีเขียว', 'กิจกรรมจำลอง • สำหรับสาธิต'. Spacious elegant typography, beautiful educational campaign poster, no QR no dates no prices no fake logos.",
+      "original": "originals/poster-green.png",
+      "web": "web/poster-green.jpg"
+    },
+    {
+      "id": "poster-science",
+      "prompt": "Portrait 3:4 premium Thai school science event poster, spectacular 3D tiny science discovery universe with telescope, planets, microscope and glowing molecules, deep violet and coral orange, refined playful editorial design. Exact text: 'KUSK EVENTS', 'SCIENCE EXPLORER', 'เปิดโลกวิทยาศาสตร์', 'กิจกรรมจำลอง • สำหรับสาธิต'. Clear large headlines plenty breathing room, polished educational visual, no QR no dates no prices.",
+      "original": "originals/poster-science.png",
+      "web": "web/poster-science.jpg"
+    },
+    {
+      "id": "poster-art",
+      "prompt": "Portrait 3:4 elegant school art workshop poster, beautiful tactile 3D brush strokes and sculptural colored paper collage with brushes, cobalt blue coral peach ivory palette, contemporary art museum editorial design. Exact text: 'KUSK EVENTS', 'ART & IMAGINATION', 'ศิลปะและจินตนาการ', 'กิจกรรมจำลอง • สำหรับสาธิต'. Balanced spacious hierarchy no QR no dates no prices no invented logos.",
+      "original": "originals/poster-art.png",
+      "web": "web/poster-art.jpg"
+    },
+    {
+      "id": "poster-sport",
+      "prompt": "Portrait 3:4 premium school sports festival poster, dynamic refined illustration of badminton shuttlecock basketball running shoes and sweeping motion ribbons, vibrant teal lime and cream, energetic sports editorial campaign. Exact text: 'KUSK EVENTS', 'MOVE TOGETHER', 'สนุกกับกีฬาและทีมเวิร์ก', 'กิจกรรมจำลอง • สำหรับสาธิต'. Readable large headline, professional attractive school poster, no QR no dates no prices.",
+      "original": "originals/poster-sport.png",
+      "web": "web/poster-sport.jpg"
+    },
+    {
+      "id": "banner-openhouse",
+      "prompt": "Create one panoramic landscape web carousel banner aspect ratio 1800:650, polished premium Thai school open house promotional illustration. Emerald green cream warm gold palette, elegant welcoming school campus courtyard, abstract open doorway and books, soft natural sunlit 3D paper architecture. Composition with large beautiful typography on left 55%, scene on right45%, generous safe margins. Exact text only: 'KUSK EVENTS', 'OPEN HOUSE 2027', 'เปิดบ้านแห่งการเรียนรู้', 'ประชาสัมพันธ์จำลอง • สำหรับสาธิต'. All text legible, no extra dates no QR no fake logos. Wide finished banner not mockup.",
+      "original": "originals/banner-openhouse.png",
+      "web": "web/banner-openhouse.jpg"
+    },
+    {
+      "id": "banner-digital",
+      "prompt": "One panoramic landscape website banner aspect ratio1800:650. Premium digital literacy school campaign, sophisticated 3D secure smartphone shield and glowing lock with friendly abstract interface cards, midnight blue electric cyan and white, contemporary editorial design. Large text on left, hero objects on right, safe margins. Exact text: 'KUSK EVENTS', 'DIGITAL SAFETY', 'รู้เท่าทันโลกดิจิทัล', 'ประชาสัมพันธ์จำลอง • สำหรับสาธิต'. Beautiful crisp banner, no QR no extra claims no dates no fake logos.",
+      "original": "originals/banner-digital.png",
+      "web": "web/banner-digital.jpg"
+    },
+    {
+      "id": "banner-community",
+      "prompt": "One panoramic landscape web carousel banner aspect ratio1800:650. Beautiful Thai school environmental community campaign, premium tactile paper-cut tiny green neighborhood with trees bicycle reusable bottle seedlings and flowing river, emerald sage cream ochre. Text area left with generous whitespace, layered detailed scene right. Exact text: 'KUSK EVENTS', 'GREEN COMMUNITY', 'ร่วมสร้างชุมชนสีเขียว', 'ประชาสัมพันธ์จำลอง • สำหรับสาธิต'. Large highly readable professional typography, no QR dates or invented logos.",
+      "original": "originals/banner-community.png",
+      "web": "web/banner-community.jpg"
+    },
+    {
+      "id": "banner-culture",
+      "prompt": "One panoramic landscape website carousel banner aspect ratio1800:650, elegant school arts and culture campaign. Rich indigo coral ivory gold palette, refined paper sculpture of Thai decorative floral patterns with paintbrushes musical notes and stage drapery, respectful contemporary museum editorial design, typography left scene right, ample margins. Exact text: 'KUSK EVENTS', 'ARTS & CULTURE', 'สืบสานศิลป์ สร้างสรรค์วัฒนธรรม', 'ประชาสัมพันธ์จำลอง • สำหรับสาธิต'. No QR no dates no fake logos. Finished high-end banner.",
+      "original": "originals/banner-culture.png",
+      "web": "web/banner-culture.jpg"
+    },
+    {
+      "id": "banner-volunteer",
+      "prompt": "One panoramic landscape web carousel banner aspect ratio1800:650. Warm optimistic school volunteering campaign, premium 3D paper-cut illustration of hands holding a heart with books seedlings and helping-community motifs, terracotta peach deep teal cream palette. Spacious beautiful bold typography left55%, scene right45%, generous safe margins. Exact text: 'KUSK EVENTS', 'GIVE & GROW', 'แบ่งปันเล็ก ๆ สร้างการเติบโต', 'ประชาสัมพันธ์จำลอง • สำหรับสาธิต'. No QR no dates no fake logos.",
+      "original": "originals/banner-volunteer.png",
+      "web": "web/banner-volunteer.jpg"
+    }
+  ]
+}

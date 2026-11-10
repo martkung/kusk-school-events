@@ -1,0 +1,19 @@
+firebase/audit/
+*.log
+node_modules/
+
+# Local credentials and environment files (Firebase web config is public).
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*service-account*.json
+*serviceAccount*.json
+firebase-debug.*
+.firebase/
+
+# Private data exports and local backup artifacts must not enter Git.
+backups/
+exports/
+private-data/

@@ -1,0 +1,90 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function lineAdminActive() { let config = get(/databases/$(database)/documents/schoolEventSystem/linePilot).data; return config.get('enabled', false) == true && request.auth.uid in config.get('lineAdminUids', []); }
+    function staffSession() { return signedIn() && ((request.auth.token.get('line_login', false) != true && request.auth.token.get('firebase', {}).get('sign_in_provider', '') != 'custom') || (request.auth.token.get('line_login', false) == true && request.auth.token.get('line_admin', false) == true && request.auth.token.get('admin', false) == true && request.auth.token.get('firebase', {}).get('sign_in_provider', '') == 'custom' && lineAdminActive())); }
+    function admin() { return staffSession() && request.auth.token.get('admin', false) == true; }
+    function checkin() { return staffSession() && request.auth.token.get('checkin', false) == true; }
+    function reports() { return staffSession() && request.auth.token.get('reports', false) == true; }
+    function owner(uid) { return signedIn() && request.auth.uid == uid; }
+
+    // Legacy project documents need review for non-public fields before publishing.
+    match /projects/{id} {
+      allow read: if true;
+      allow create, update, delete: if admin();
+    }
+    match /registrations/{id} {
+      allow read: if admin() || checkin() || reports();
+      allow create, delete: if admin();
+      allow update: if admin() || (checkin() && request.resource.data.diff(resource.data)
+        .affectedKeys().hasOnly(['checkInStatus', 'checkInAt', 'checkInBy']));
+    }
+    match /registrationCounters/{id} { allow read, write: if admin(); }
+    match /admins/{id} { allow read: if admin(); allow write: if false; }
+    match /adminUsers/{id} { allow read: if admin(); allow write: if false; }
+    match /users/{uid} { allow read: if owner(uid) || admin(); allow write: if false; }
+
+    // New public catalog is a curated projection, not an applicant collection.
+    match /schoolEventCatalog/{id} {
+      allow read: if resource.data.published == true || admin();
+      allow write: if false;
+    }
+    match /schoolEventAccounts/{uid}/participants/{id} {
+      allow read: if owner(uid);
+      allow create: if owner(uid)
+        && request.resource.data.keys().hasAll(['displayName','relationship','createdAt'])
+        && request.resource.data.keys().hasOnly(['displayName','relationship','createdAt'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() > 0
+        && request.resource.data.displayName.size() <= 120
+        && request.resource.data.relationship in ['self','child']
+        && request.resource.data.createdAt == request.time;
+      allow update: if owner(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() > 0
+        && request.resource.data.displayName.size() <= 120;
+      allow delete: if false;
+    }
+    match /schoolEventProfiles/{uid} {
+      allow read: if owner(uid);
+      allow create, update: if owner(uid)
+        && request.resource.data.keys().hasAll(['displayName','phone','updatedAt'])
+        && request.resource.data.keys().hasOnly(['displayName','phone','updatedAt'])
+        && request.resource.data.phone is string
+        && request.resource.data.phone.matches('^0[1-9][0-9]{7,8}$')
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() > 0
+        && request.resource.data.displayName.size() <= 120
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+    match /schoolEventApplications/{id} {
+      allow read: if owner(resource.data.ownerUid) || admin();
+      allow write: if false;
+    }
+    match /schoolEventStaff/{uid}/events/{eventId} {
+      allow read: if (staffSession() && owner(uid)) || admin();
+      allow write: if false;
+    }
+    // Change notifications contain no applicant data. Raw applications stay private.
+    match /schoolEventSignals/{eventId} {
+      allow read: if admin() || (staffSession()
+        && exists(/databases/$(database)/documents/schoolEventStaff/$(request.auth.uid)/events/$(eventId))
+        && get(/databases/$(database)/documents/schoolEventStaff/$(request.auth.uid)/events/$(eventId)).data.active == true
+        && get(/databases/$(database)/documents/schoolEventStaff/$(request.auth.uid)/events/$(eventId)).data.get('permissions', []).hasAny(['review','checkin','reports']));
+      allow write: if false;
+    }
+    match /schoolEventAudit/{id} {
+      allow read: if admin();
+      allow write: if false;
+    }
+    // All unspecified paths denied. Enrollment and role assignment use trusted server.
+    match /schoolEventBanners/{id} {
+      allow read: if resource.data.published == true || admin();
+      allow write: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

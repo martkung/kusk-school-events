@@ -1,0 +1,1 @@
+export function normalizePhone(value){const phone=String(value??'').trim().replace(/[\s()-]/g,'').replace(/^(\+66|0066)/,'0');if(!/^0[1-9][0-9]{7,8}$/.test(phone))throw new Error('กรุณาระบุเบอร์โทรไทย 9–10 หลัก เช่น 0812345678');return phone}

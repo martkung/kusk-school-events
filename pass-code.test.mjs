@@ -1,0 +1,11 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {passCode,parsePass} from './dist/pass-code.js';
+import QR from './dist/vendor/qr.js';
+const record={id:'a'.repeat(64),eventId:'event-1',status:'approved'};
+test('approved pass round trips and can be encoded locally',()=>{const value=passCode(record);assert.equal(parsePass(value,'event-1'),record.id);const qr=QR.create(value);assert.ok(qr.modules.size>=21);assert.ok(!value.includes('participantName'))});
+test('unapproved passes cannot be generated',()=>{for(const status of ['pending','rejected','cancelled'])assert.throws(()=>passCode({...record,status}))});
+test('wrong event and malformed payload rejected',()=>{assert.throws(()=>parsePass(passCode(record),'other'));for(const value of ['javascript:alert(1)','KUSK1:event-1:bad','https://example.com',''])assert.throws(()=>parsePass(value,'event-1'))});
+test('reference input supported for manual fallback',()=>assert.equal(parsePass(' '+record.id+' ','event-1'),record.id));
+test('manual short reference accepts lowercase without changing old QR format',()=>{assert.equal(parsePass(' kuskevent-7m4x9p2a ','event'),'KUSKevent-7M4X9P2A')});
+test('QR supports the same 128-character event ID limit as the server',()=>{const record={eventId:'e'.repeat(128),id:'a'.repeat(64),status:'approved'};assert.equal(parsePass(passCode(record),record.eventId),record.id)});

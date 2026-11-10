@@ -1,0 +1,7 @@
+# Short applicant references
+
+Applications retain their original Firestore document ID and KUSK1 QR payload. referenceCode is a human-readable KUSKevent-XXXXXXXX identifier using 32 unambiguous uppercase letters/digits. Crypto randomness supplies 40 bits; a private schoolEventReferences document is reserved atomically in the same transaction as enrollment, so concurrent collisions retry through Firestore transaction contention. Codes are not authentication credentials.
+
+Manual short-code lookup is limited to previewCheckin/checkin, rechecks the assigned event and checkin permission before index access, and resolves the original application ID. Existing QR, cancellation, audit references and pagination continue using original IDs. Public/applicant/client Admin reads of the index are denied by existing default-deny Rules. CSV, reports, contact details and event passes show the short identifier. Search accepts either identifier.
+
+firebase/backfill-references.cjs adds only the short identifier and lookup reservation to existing applications, preserving applicant fields, status, seats, checkin evidence and QR. It skips missing or actively purging events; repeated runs preserve already-assigned codes. No applicant details are exported or logged. Event purge replaces its lookup reservations with {retired:true}, removing application/event links and preventing reassignment of old short codes.

@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@zxing/browser": "^0.1.5",
+    "esbuild": "^0.25.12",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1"
+  }
+}

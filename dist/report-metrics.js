@@ -1,0 +1,5 @@
+import {reportTime} from './report-data.js';
+export const statusLabel={pending:'รอพิจารณา',approved:'อนุมัติแล้ว',rejected:'ปฏิเสธแล้ว',cancelled:'ยกเลิกแล้ว',deleted:'อยู่ในถังขยะ'};
+export function summarize(items){items=items.filter(item=>item.status!=='deleted');const result={total:items.length,pending:0,approved:0,rejected:0,cancelled:0,checkedIn:0};for(const item of items){if(Object.hasOwn(result,item.status)&&!['total','checkedIn'].includes(item.status))result[item.status]++;if(item.checkedIn)result.checkedIn++}return result}
+export function csvCell(value){let text=String(value??'');if(/^\s*[=+\-@\t\r]/.test(text))text="'"+text;return '"'+text.replaceAll('"','""')+'"'}
+export function reportCsv(items){return '\ufeff'+[['เลขอ้างอิง','ชื่อผู้เข้าร่วม','สถานะ','เช็คอิน','วันที่สมัคร (เวลาไทย)','เวลาเช็คอิน (เวลาไทย)'],...items.filter(item=>item.status!=='deleted').map(item=>[item.referenceCode||item.id,item.participantName,statusLabel[item.status]||item.status,item.checkedIn?'แล้ว':'ยัง',reportTime(item.createdAtMs),item.checkedIn?reportTime(item.checkedInAtMs):''])].map(row=>row.map(csvCell).join(',')).join('\r\n')}

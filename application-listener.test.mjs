@@ -1,0 +1,8 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {watchOwnedApplications} from './dist/application-listener.js';
+function setup(){const auth={currentUser:{uid:'alice'}};let onData,onError,stopped=false,filter;const sdk={collection:()=>({}),where:(key,op,value)=>(filter={key,op,value}),query:()=>({}),onSnapshot:(query,options,next,error)=>{onData=next;onError=error;return()=>stopped=true}};return {deps:{sdk,db:{},auth},emit:(status,fromCache=false)=>onData({docs:[{id:'app',data:()=>({status})}],metadata:{fromCache}}),error:()=>onError(Error('test')),filter:()=>filter,stopped:()=>stopped}};
+test('updates multiple times without reload, filtered to signed-in owner',()=>{const f=setup(),seen=[];watchOwnedApplications(f.deps,(data,metadata)=>seen.push([data[0].status,metadata.fromCache]));f.emit('pending',true);f.emit('approved');assert.deepEqual(seen,[['pending',true],['approved',false]]);assert.deepEqual(f.filter(),{key:'ownerUid',op:'==',value:'alice'})});
+test('account switch suppresses old data and errors',()=>{const f=setup();let calls=0;watchOwnedApplications(f.deps,()=>calls++,()=>calls++);f.deps.auth.currentUser={uid:'bob'};f.emit('approved');f.error();assert.equal(calls,0)});
+test('unsubscribe stops SDK listener and suppresses late callbacks',()=>{const f=setup();let calls=0;const stop=watchOwnedApplications(f.deps,()=>calls++);stop();f.emit('approved');assert.equal(f.stopped(),true);assert.equal(calls,0)});
+test('signed-out clients cannot start listening',()=>{const f=setup();f.deps.auth.currentUser=null;assert.throws(()=>watchOwnedApplications(f.deps,()=>{}))});

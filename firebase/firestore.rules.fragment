@@ -1,0 +1,19 @@
+// MERGE into the existing service /databases/{database}/documents block.
+// Do not replace the live rules with this fragment. Broad existing matches can
+// override these restrictions; audit and emulator-test the complete rules first.
+match /schoolEventAccounts/{uid}/participants/{participantId} {
+  allow read: if request.auth != null && request.auth.uid == uid;
+  allow create: if request.auth != null && request.auth.uid == uid
+    && request.resource.data.keys().hasOnly(['displayName', 'relationship', 'createdAt'])
+    && request.resource.data.displayName is string
+    && request.resource.data.displayName.size() > 0
+    && request.resource.data.displayName.size() <= 120
+    && request.resource.data.relationship in ['self', 'child']
+    && request.resource.data.createdAt == request.time;
+  allow update, delete: if false;
+}
+match /schoolEventApplications/{applicationId} {
+  allow read: if request.auth != null && resource.data.ownerUid == request.auth.uid;
+  // Trusted server must enforce availability, duplicate prevention and status.
+  allow write: if false;
+}

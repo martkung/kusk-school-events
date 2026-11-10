@@ -1,0 +1,8 @@
+import {parsePass} from './pass-code.js';
+export function createCheckinController(client,eventId,onChange,isCurrent=()=>true,onDone=()=>{}){
+ let version=0,state={phase:'idle'};const publish=value=>{state=value;if(isCurrent())onChange({...state})};
+ function reset(){version++;publish({phase:'idle'})}
+ async function preview(raw){if(state.phase==='submitting')return;const mine=++version;publish({phase:'loading'});try{const id=parsePass(raw,eventId);const record=await client.operate({action:'previewCheckin',eventId,applicationId:id});if(mine!==version||!isCurrent())return;publish({phase:'ready',id:record.applicationId||id,record})}catch(error){if(mine===version&&isCurrent())publish({phase:'error',message:error.message||'ตรวจบัตรไม่ได้ กรุณาลองใหม่'})}}
+ async function confirm(signature){if(state.phase!=='ready'||state.record.status!=='approved'||(state.record.checkedIn&&!signature)||!state.record.checkinOpen||!isCurrent())return;const saved=state,mine=version;publish({...saved,phase:'submitting'});try{const result=signature?await client.signCheckin({action:'save',eventId,applicationId:saved.id,expectedName:saved.record.participantName,...signature}):await client.operate({action:'checkin',eventId,applicationId:saved.id});if(mine!==version||!isCurrent())return;publish({...saved,phase:'done',alreadyDone:result.alreadyDone===true,...(signature?{signatureSaved:true,record:{...saved.record,hasSignature:true,checkedIn:true}}: {})});onDone(saved.id)}catch(error){if(mine===version&&isCurrent())publish(signature?{...saved,phase:'ready',message:error.message||'ยังยืนยันผลไม่ได้ กรุณาลองบันทึกอีกครั้ง'}:{phase:'error',message:error.message||'ยังยืนยันผลไม่ได้ กรุณาตรวจบัตรอีกครั้งก่อนลองใหม่'})}}
+ return {preview,confirm,reset,getState:()=>({...state})};
+}

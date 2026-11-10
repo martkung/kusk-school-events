@@ -1,0 +1,55 @@
+/* Compact discovery cards; enrollment fields keep their normal sizing. */
+.event-catalog{margin:18px 0}
+.event-catalog>h2{font-size:25px;margin-bottom:25px}
+.event-card-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:28px 24px}
+.catalog-poster{border-radius:6px;padding:15px;aspect-ratio:3/4}
+.catalog-poster strong{font-size:19px;line-height:1.45}
+.catalog-poster small{font-size:9px;letter-spacing:1.5px}
+.catalog-poster span{font-size:10px}
+.catalog-info{padding:3px 3px 9px}
+.catalog-info h3{font-size:14px;line-height:1.5;font-weight:600;margin:11px 0 12px;min-height:42px}
+.catalog-info .meta{font-size:11px;line-height:1.6;margin:5px 0}
+.catalog-info .badge{font-size:10px;padding:3px 7px}
+.catalog-info .sub{font-size:11px;margin:6px 0}
+.catalog-details{font-size:11px;margin:8px 0}
+.catalog-details p{font-size:12px}
+.catalog-actions>button,.catalog-actions>a{font-size:12px;line-height:1.5;min-height:36px;padding:8px 10px;border-radius:20px}
+.enrollment-open{grid-template-columns:180px 1fr}
+.enrollment-open .catalog-poster{max-height:250px}
+.enrollment-open .catalog-info h3{font-size:19px;min-height:0}
+.enrollment-open .catalog-info .meta,.enrollment-open .catalog-info .sub{font-size:13px}
+.enrollment-open .catalog-details{font-size:13px}
+.enrollment-open .catalog-actions form button{min-height:44px}
+@media(max-width:1100px){.event-card-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:26px 20px}}
+@media(max-width:800px){.event-card-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px 16px}}
+@media(max-width:650px){
+ .event-catalog>h2{font-size:22px;margin-bottom:20px}
+ .event-card-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 14px}
+ .catalog-poster{padding:14px}
+ .catalog-poster strong{font-size:18px}
+ .catalog-info h3{font-size:14px}
+ .catalog-info .meta,.catalog-info .sub,.catalog-details{font-size:12px}
+ .catalog-actions>button,.catalog-actions>a{min-height:44px;font-size:13px;padding:11px 8px}
+ .enrollment-open{grid-template-columns:100px 1fr;gap:12px}
+ .enrollment-open .catalog-info h3{font-size:16px}
+ .enrollment-open .catalog-poster strong{font-size:14px}
+}
+@media(max-width:360px){.event-card-grid{grid-template-columns:1fr}.enrollment-open{display:flex}}
+.catalog-poster[role=button]{cursor:pointer}.catalog-poster[role=button]:hover{filter:brightness(.97)}.event-title-button{background:none;color:inherit;padding:0;border:0;font:inherit;text-align:left;border-radius:0}.event-title-button:hover{text-decoration:underline}.detail-poster{display:block;width:100%;max-height:52vh;object-fit:contain;margin:20px auto}.detail-copy{font-size:14px;line-height:1.8}.event-description{white-space:pre-wrap;overflow-wrap:anywhere}.detail-copy .primary{min-height:44px}dialog{max-height:90dvh;overflow-y:auto}@media(max-width:650px){dialog{padding:28px 22px}.detail-copy{font-size:14px}}
+.admin-event-actions{display:flex;flex-direction:column;gap:8px}.danger-outline{background:#fff;color:#b42318;border:1px solid #dcaaa6;min-height:44px;padding:10px 16px;border-radius:8px}.danger-outline:hover{background:#fff0ee}.danger-outline:disabled{opacity:.5;cursor:not-allowed}.event-delete-buttons{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.event-delete-buttons button{min-height:44px}@media(max-width:650px){.admin-event-actions{flex-direction:row;flex-wrap:wrap}.admin-event-actions button{flex:1}.event-delete-buttons button{flex:1}}
+
+/* Public activity QR and mobile detail actions. */
+.event-share-link{width:100%;font-size:14px}.event-share-action{display:block;text-align:center;width:100%;margin-top:12px;min-height:44px;padding:12px}.detail-copy>.primary{min-height:48px;width:100%;position:sticky;bottom:0;box-shadow:0 0 0 8px white}
+
+/* Keep intrinsic image sizes and long fallback titles inside the compact card. */
+.catalog-card:not(.enrollment-open) .catalog-poster{position:relative;flex:0 0 auto;width:100%;height:auto;min-width:0;aspect-ratio:3/4;padding:12px;gap:10px}
+.catalog-card:not(.enrollment-open) .catalog-poster:has(img){padding:0}
+.catalog-card:not(.enrollment-open) .catalog-poster img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain}
+.catalog-card:not(.enrollment-open) .catalog-poster strong{font-size:16px;line-height:1.6;letter-spacing:0;min-height:0;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow-wrap:anywhere}
+.catalog-card:not(.enrollment-open) .catalog-poster small,.catalog-card:not(.enrollment-open) .catalog-poster span{flex-shrink:0;line-height:1.6;overflow-wrap:anywhere}
+.catalog-info,.catalog-actions{min-width:0}.catalog-info h3,.catalog-info .meta{overflow-wrap:anywhere}
+.event-title-button{max-width:100%;line-height:1.6;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:650px){.catalog-card:not(.enrollment-open) .catalog-poster{padding:10px;gap:8px}.catalog-card:not(.enrollment-open) .catalog-poster strong{font-size:15px;line-height:1.6}.catalog-info h3{line-height:1.65}}
+
+/* Administrative state commands: the current state cannot be submitted again. */
+.event-state-group{margin-top:18px}.event-state-group h4{font-size:14px;margin:0 0 8px}.event-state-actions{display:flex;flex-wrap:wrap;gap:8px}.backoffice .event-state-actions button{margin:0;min-height:44px;min-width:140px}.event-state-button:disabled{opacity:1;background:#e7eae8;color:#68716c;border:1px solid #d4dad6;cursor:not-allowed;box-shadow:none}.event-status-message{font-size:13px;line-height:1.7;color:var(--muted);min-height:22px;margin-bottom:0}.event-status-controls[aria-busy=true] .event-status-message{color:var(--green)}@media(max-width:650px){.event-state-actions button{flex:1;min-width:0!important}}
