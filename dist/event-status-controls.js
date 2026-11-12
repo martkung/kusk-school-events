@@ -1,4 +1,5 @@
-export function mountEventStatus(root,client,event,isCurrent=()=>true){
+import {registrationWindow} from './registration-window.js';
+export function mountEventStatus(root,client,event,isCurrent=()=>true,{checkinOnly=false}={}){
  let state={...event},busy=false,confirming=false,disposed=false,stale=false,confirmation=null;
  const revisions={registrationOpen:0,checkinOpen:0};
  const panel=document.createElement('section');panel.className='panel event-status-controls';
@@ -11,7 +12,7 @@ export function mountEventStatus(root,client,event,isCurrent=()=>true){
  const buttons=[];
  function draw(){
   if(!active())return;panel.setAttribute('aria-busy',String(busy));
-  summary.textContent='รับสมัคร: '+(state.registrationOpen?'เปิด':'ปิด')+' · เช็คอิน: '+(state.checkinOpen?'เปิด':'ปิด')+' · กันที่นั่งแล้ว '+(state.reservedCount||0)+' / '+(state.capacity||0)+' คน';
+  summary.textContent='รับสมัคร: '+(registrationWindow(state).open?'เปิด':'ปิด')+' · เช็คอิน: '+(state.checkinOpen?'เปิด':'ปิด')+' · กันที่นั่งแล้ว '+(state.reservedCount||0)+' / '+(state.capacity||0)+' คน';
   for(const item of buttons){const current=state[item.field]===item.target;item.button.disabled=busy||confirming||stale||state.deleted===true||state.purging===true||typeof state[item.field]!=='boolean'||current;item.button.classList.toggle('is-current',current);item.button.textContent=current?item.label+(item.target?'แล้ว':'อยู่'):item.label;item.button.title=current?'สถานะปัจจุบันของกิจกรรม':item.label;}
   if(confirmation){confirmation.button.disabled=busy||stale||state.deleted===true||state.purging===true||state[confirmation.field]===confirmation.target;if(!busy&&state[confirmation.field]===confirmation.target)confirmation.result.textContent='สถานะนี้ถูกตั้งไว้แล้ว กรุณาปิดหน้าต่าง';else if(!busy&&stale)confirmation.result.textContent='กำลังรอสถานะล่าสุด กรุณาเชื่อมต่อระบบก่อนยืนยัน'}
  }
@@ -39,7 +40,7 @@ export function mountEventStatus(root,client,event,isCurrent=()=>true){
    finally{busy=false;if(active()){cancel.disabled=false;if(!modal.open||!body.contains(content)){confirming=false;confirmation=null}draw()}}
   };
  }
- for(const [field,title,open,pause,action] of groups){const group=document.createElement('div');group.className='event-state-group';const label=document.createElement('h4');label.textContent=title;const actions=document.createElement('div');actions.className='event-state-actions';group.append(label,actions);panel.append(group);for(const [target,text] of [[true,open],[false,pause]]){const button=document.createElement('button');button.type='button';button.className='event-state-button '+(target?'primary':'outline');const item={button,field,target,label:text,action};buttons.push(item);button.onclick=()=>ask(item);actions.append(button)}}
+ for(const [field,title,open,pause,action] of groups.filter(g=>!checkinOnly||g[0]==='checkinOpen')){const group=document.createElement('div');group.className='event-state-group';const label=document.createElement('h4');label.textContent=title;const actions=document.createElement('div');actions.className='event-state-actions';group.append(label,actions);panel.append(group);for(const [target,text] of [[true,open],[false,pause]]){const button=document.createElement('button');button.type='button';button.className='event-state-button '+(target?'primary':'outline');const item={button,field,target,label:text,action};buttons.push(item);button.onclick=()=>ask(item);actions.append(button)}}
  panel.append(message);draw();
  return {
   update(next,metadata={}){if(!active()||next?.id!==event.id)return;for(const field of Object.keys(revisions))if(state[field]!==next[field])revisions[field]++;state={...next};stale=metadata.fromCache===true;if(stale)message.textContent='กำลังตรวจสอบสถานะล่าสุด กรุณารอเชื่อมต่อระบบก่อนเปลี่ยนสถานะ';else if(!busy)message.textContent='สถานะอัปเดตจากระบบแล้ว';draw()},

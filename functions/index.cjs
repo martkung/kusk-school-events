@@ -8,6 +8,7 @@ const {operate}=require('./operations.cjs');
 const logger=require('firebase-functions/logger');
 const {safeCall}=require('./safe-call.cjs');
 initializeApp();
+exports.schoolEventLegacy=onCall({region:'asia-southeast1',maxInstances:3,concurrency:20,invoker:'public',cors:['https://kusk-register.web.app','https://kusk-register.firebaseapp.com','http://127.0.0.1:5180']},request=>safeCall('legacy',request,r=>require('./legacy.cjs').legacy(r,{db:getFirestore(),HttpsError,FieldValue}),{logger,HttpsError}));
 exports.schoolEventEnroll=onCall({region:'asia-southeast1',maxInstances:3,invoker:'public'},request=>safeCall('enroll',request,r=>enroll(r,{db:getFirestore(),HttpsError,FieldValue}),{logger,HttpsError}));
 exports.schoolEventOperate=onCall({region:'asia-southeast1',maxInstances:3,invoker:'public'},request=>safeCall('operate',request,r=>operate(r,{db:getFirestore(),HttpsError,FieldValue,auth:getAuth()}),{logger,HttpsError}));
 exports.schoolEventLinePilot=onCall({region:'asia-southeast1',maxInstances:3,invoker:'public'},request=>safeCall('line',request,r=>require('./line-pilot.cjs').linePilot(r,{db:getFirestore(),HttpsError,FieldValue,auth:getAuth()}),{logger,HttpsError}));

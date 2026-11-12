@@ -7,7 +7,7 @@ const nextPhase=phase=>PHASES[PHASES.indexOf(phase)+1];
 async function eachLimited(items,operation){for(let i=0;i<items.length;i+=5)await Promise.all(items.slice(i,i+5).map(operation))}
 exports.purgeEvent=async(request,{db,bucket,HttpsError,FieldValue,now=Date.now})=>{
  if(!request.auth)throw new HttpsError('unauthenticated','กรุณาเข้าสู่ระบบ');
- if(request.auth.token?.admin!==true||applicantOnly(request.auth.token))throw new HttpsError('permission-denied','เฉพาะ Admin เท่านั้นที่ลบกิจกรรมถาวรได้');
+ await require('./delegation.cjs').assertSystem(request,db,'purgeEvents',HttpsError);
  if(approvedLineAdmin(request.auth.token)){const config=(await db.doc('schoolEventSystem/linePilot').get()).data();if(config?.enabled!==true||!(config.lineAdminUids||[]).includes(request.auth.uid))throw new HttpsError('permission-denied','สิทธิ์ Admin ผ่าน LINE สิ้นสุดแล้ว')}
  const {action,eventId,confirmation,expectedName,previewToken}=request.data||{};
  if(!['preview','start','step'].includes(action)||typeof eventId!=='string'||!/^[A-Za-z0-9_-]{1,128}$/.test(eventId)||eventId.startsWith('__'))throw new HttpsError('invalid-argument','กิจกรรมไม่ถูกต้อง');
@@ -27,6 +27,7 @@ exports.purgeEvent=async(request,{db,bucket,HttpsError,FieldValue,now=Date.now})
   return {done:false,name:event.data().name,previewToken:stampOf(event.data()),inProgress:job.exists,phase:job.data()?.phase||null,counts:job.data()?.counts||await counts()};
  }
  if(action==='start')return db.runTransaction(async tx=>{
+  await require('./delegation.cjs').assertSystem(request,db,'purgeEvents',HttpsError,tx);
   const [event,job,receipt]=await Promise.all([tx.get(eventRef),tx.get(jobRef),tx.get(receiptRef)]);
   if(receipt.exists)return {done:true,counts:receipt.data().counts||null};
   if(!event.exists||event.data().deleted!==true)throw new HttpsError('failed-precondition','ลบถาวรได้เฉพาะกิจกรรมในถังขยะ');
@@ -38,6 +39,7 @@ exports.purgeEvent=async(request,{db,bucket,HttpsError,FieldValue,now=Date.now})
  });
  const lease=randomUUID();let job;
  const ready=await db.runTransaction(async tx=>{
+  await require('./delegation.cjs').assertSystem(request,db,'purgeEvents',HttpsError,tx);
   const [current,event,receipt]=await Promise.all([tx.get(jobRef),tx.get(eventRef),tx.get(receiptRef)]);
   if(receipt.exists)return {done:true,counts:receipt.data().counts||null};
   if(!current.exists||!event.exists||event.data().deleted!==true||event.data().purging!==true)throw new HttpsError('failed-precondition','กรุณายืนยันเริ่มลบถาวรก่อน');
@@ -48,6 +50,7 @@ exports.purgeEvent=async(request,{db,bucket,HttpsError,FieldValue,now=Date.now})
  if(ready)return ready;
  async function update(change){return db.runTransaction(async tx=>{const current=await tx.get(jobRef);if(!current.exists||current.data().leaseToken!==lease)throw new HttpsError('aborted','งานลบเปลี่ยนแล้ว กรุณาตรวจสถานะใหม่');tx.update(jobRef,{...change,leaseToken:null,leaseUntil:0});return state({...job,...change})})}
  try{
+  await require('./delegation.cjs').assertSystem(request,db,'purgeEvents',HttpsError);
   if(job.phase==='prepare')return await update({counts:await counts(),phase:'applications'});
   if(['applications','audit'].includes(job.phase)){
    const collection=job.phase==='applications'?'schoolEventApplications':'schoolEventAudit',page=await query(collection).limit(50).select().get();

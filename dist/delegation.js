@@ -1,0 +1,3 @@
+export const systemPermissionNames={createEvents:'สร้างกิจกรรมใหม่',editEvents:'แก้ไขข้อมูลกิจกรรม',posters:'เปลี่ยนโปสเตอร์กิจกรรม',registrationControl:'เปิด–พักรับสมัคร และตั้งเวลารับสมัคร',checkinControl:'เปิด–พักเช็คอิน',banners:'เพิ่ม ลบ แก้ไขแบนเนอร์ประชาสัมพันธ์',applicationsTrash:'ลบและกู้คืนใบสมัคร (เห็นชื่อและสถานะ)',eventsTrash:'ลบและกู้คืนกิจกรรม',purgeEvents:'ลบกิจกรรมและข้อมูลที่เกี่ยวข้องถาวร (กู้คืนไม่ได้)',audit:'ดูประวัติการดำเนินการ (อาจมีข้อมูลติดต่อเดิม)'};
+export const hasSystem=(context,key)=>context?.admin===true||context?.systemPermissions?.includes(key)===true;
+export const isManager=context=>context?.admin===true||context?.systemPermissions?.length>0;

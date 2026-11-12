@@ -18,7 +18,7 @@ exports.enroll=async function(request,{db,HttpsError,FieldValue}){
   if(!existing.empty){const record=existing.docs[0];return {id:record.id,status:record.data().status,alreadyApplied:true};}
   if(!catalog.exists)throw new HttpsError('not-found','ไม่พบกิจกรรม');
   const e=catalog.data(),now=Date.now();
-  if(e.deleted===true||e.published!==true||e.registrationOpen!==true||e.opensAt&&e.opensAt.toMillis()>now||e.closesAt&&e.closesAt.toMillis()<now)throw new HttpsError('failed-precondition','กิจกรรมยังไม่เปิดรับสมัครหรืออยู่นอกช่วงรับสมัคร');
+  if(e.deleted===true||e.published!==true||!require('./registration-window.cjs').registrationWindow(e,now).open)throw new HttpsError('failed-precondition','กิจกรรมยังไม่เปิดรับสมัครหรืออยู่นอกช่วงรับสมัคร');
   if(!Number.isInteger(e.capacity)||e.capacity<1||!Number.isInteger(e.reservedCount)||e.reservedCount<0)throw new HttpsError('failed-precondition','ข้อมูลจำนวนรับไม่พร้อม');
   if(e.reservedCount>=e.capacity)throw new HttpsError('resource-exhausted','กิจกรรมเต็มแล้ว');
   const reference=await require('./reference-code.cjs').reserveReference(tx,db,id,eventId,HttpsError);

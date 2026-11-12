@@ -16,11 +16,12 @@ exports.bannerData=(data,id,HttpsError)=>{
 };
 exports.banners=async(request,{db,HttpsError,FieldValue})=>{
  const {action,bannerId,banner,expectedVersion}=request.data||{};
- if(request.auth?.token?.admin!==true)throw new HttpsError('permission-denied','เฉพาะ Admin เท่านั้นที่จัดการประชาสัมพันธ์ได้');
+ await require('./delegation.cjs').assertSystem(request,db,'banners',HttpsError);
  if(typeof bannerId!=='string'||!/^[A-Za-z0-9_-]{1,80}$/.test(bannerId)||!Number.isInteger(expectedVersion)||expectedVersion<0)throw new HttpsError('invalid-argument','ข้อมูลแบนเนอร์ไม่ถูกต้อง');
  const data=action==='saveBanner'?exports.bannerData(banner,bannerId,HttpsError):null;
  const ref=db.doc('schoolEventBanners/'+bannerId),meta=db.doc('schoolEventBannerMeta/main');
  return db.runTransaction(async tx=>{
+  await require('./delegation.cjs').assertSystem(request,db,'banners',HttpsError,tx);
   if(require('./session-access.cjs').approvedLineAdmin(request.auth.token)){const config=(await tx.get(db.doc('schoolEventSystem/linePilot'))).data();if(config?.enabled!==true||!(config.lineAdminUids||[]).includes(request.auth.uid))throw new HttpsError('permission-denied','สิทธิ์ Admin ผ่าน LINE สิ้นสุดแล้ว')}
   const [snapshot,countDoc]=await Promise.all([tx.get(ref),tx.get(meta)]),version=snapshot.exists?snapshot.data().version:0,count=countDoc.data()?.count||0;
   if(!snapshot.exists&&action==='deleteBanner')return {ok:true,alreadyDone:true};

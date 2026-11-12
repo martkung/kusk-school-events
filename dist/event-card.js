@@ -1,6 +1,7 @@
+import {registrationWindow,thaiTime} from './registration-window.js';
 export function eventAvailability(event){
  const remaining=Math.max(0,Number(event.capacity||0)-Number(event.reservedCount||0));
- return {remaining,label:!event.registrationOpen?'ยังไม่เปิดรับสมัคร':remaining===0?'เต็มแล้ว':'เปิดรับสมัคร',open:event.registrationOpen===true&&remaining>0};
+ const window=registrationWindow(event);const label=window.reason==='waiting'?'เปิดรับสมัคร '+thaiTime(event.opensAtMs):window.reason==='closed'?'ปิดรับสมัครแล้ว':window.reason==='paused'?'พักรับสมัคร':!window.open?'ยังไม่เปิดรับสมัคร':remaining===0?'เต็มแล้ว':'เปิดรับสมัคร';return {remaining,label,open:window.open&&remaining>0};
 }
 export function createEventCard(event,index){
  const card=document.createElement('article');card.className='catalog-card';

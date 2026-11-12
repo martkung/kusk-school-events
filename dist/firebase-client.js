@@ -63,7 +63,8 @@ async function initialize() {
       const line=token.claims.line_login===true||token.claims.firebase?.sign_in_provider==='custom';
       if(line&&!(token.claims.line_login===true&&token.claims.line_admin===true&&token.claims.admin===true&&token.claims.firebase?.sign_in_provider==='custom'))return {admin:false,events:[]};
       const snapshot=await dbSDK.getDocs(dbSDK.collection(db,'schoolEventStaff',auth.currentUser.uid,'events'));
-      return {admin:token.claims.admin===true,events:snapshot.docs.map(d=>({...d.data(),id:d.id})).filter(d=>d.active)};
+      const delegate=await dbSDK.getDoc(dbSDK.doc(db,'schoolEventDelegates',auth.currentUser.uid));const systemPermissions=delegate.data()?.active===true?delegate.data().permissions||[]:[];
+      return {admin:token.claims.admin===true,systemPermissions,events:snapshot.docs.map(d=>({...d.data(),id:d.id})).filter(d=>d.active)};
     },
     async operate(data){
       return (await functionsSDK.httpsCallable(functionsSDK.getFunctions(app,'asia-southeast1'),'schoolEventOperate')(data)).data;
